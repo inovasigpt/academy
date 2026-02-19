@@ -13,18 +13,23 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Cyber-Shield Academy | Platform Edukasi Cyber Security",
-  description: "Kuasai keamanan siber dari dasar hingga mahir. Belajar dari praktisi, praktik di lab virtual, dan bangun karir di dunia cybersecurity.",
-  keywords: ["cyber security", "cybersecurity", "ethical hacking", "pentesting", "SOC analyst", "online course"],
-  manifest: '/manifest.json',
-  icons: {
-    icon: '/favicon.ico',
-    apple: '/icon-192x192.png',
-  },
+  title: "AI Academy | Platform Edukasi AI-Generated Courses",
+  description:
+    "Platform pembelajaran revolusioner di mana AI menciptakan semua materi. Cyber Security, Programming, Automation, Data Science - belajar gratis 24/7.",
+  keywords: [
+    "AI courses",
+    "cyber security",
+    "programming",
+    "automation",
+    "data science",
+    "online learning",
+    "free courses",
+  ],
+  manifest: "/manifest.json",
 };
 
 export const viewport: Viewport = {
-  themeColor: '#020617',
+  themeColor: "#020617",
 };
 
 export default function RootLayout({
