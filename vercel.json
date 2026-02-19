@@ -3,5 +3,5 @@
   "buildCommand": "cd cyber-shield-academy && npm run build",
   "outputDirectory": "cyber-shield-academy/dist",
   "framework": "nextjs",
-  "installCommand": "npm install"
+  "installCommand": "cd cyber-shield-academy && npm install"
 }
