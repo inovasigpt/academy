@@ -2,8 +2,19 @@
 
 import { motion } from 'framer-motion';
 import { Clock, BookOpen, ArrowRight, Sparkles } from 'lucide-react';
-import { Course, LEVEL_LABELS, LEVEL_COLORS } from '@/entities/courses/model/courses';
+import { LEVEL_LABELS, LEVEL_COLORS, DifficultyLevel } from '@/shared/types';
 import Link from 'next/link';
+
+interface Course {
+  id: string;
+  title: string;
+  slug: string;
+  description: string;
+  thumbnail?: string | null;
+  level: string;
+  category: string;
+  duration?: number | null;
+}
 
 interface CourseCardProps {
   course: Course;
@@ -22,15 +33,15 @@ export function CourseCard({ course, index = 0 }: CourseCardProps) {
           {/* Thumbnail */}
           <div className="relative h-48 overflow-hidden">
             <img
-              src={course.thumbnail}
+              src={course.thumbnail || ''}
               alt={course.title}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent" />
             
             {/* Level Badge */}
-            <div className={`absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-medium border ${LEVEL_COLORS[course.level]}`}>
-              {LEVEL_LABELS[course.level]}
+            <div className={`absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-medium border ${LEVEL_COLORS[course.level as DifficultyLevel]}`}>
+              {LEVEL_LABELS[course.level as DifficultyLevel]}
             </div>
             
             {/* AI Generated Badge */}

@@ -5,22 +5,22 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, Clock, BookOpen, PlayCircle, Sparkles, CheckCircle2, Circle } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Course, LEVEL_LABELS, LEVEL_COLORS } from '@/entities/courses/model/courses';
-import { mockSessions, mockMaterials } from '@/entities/sessions/model/sessions';
+import { LEVEL_LABELS, LEVEL_COLORS, DifficultyLevel } from '@/shared/types';
 import { SessionAccordion } from '@/entities/sessions/ui/session-accordion';
+import { CourseWithSessions } from '@/db/queries';
 
 interface CourseDetailProps {
-  course: Course;
+  courseData: NonNullable<CourseWithSessions>;
 }
 
-export function CourseDetail({ course }: CourseDetailProps) {
+export function CourseDetail({ courseData }: CourseDetailProps) {
   const [openSession, setOpenSession] = useState<string | null>(null);
   const [completedSessions, setCompletedSessions] = useState<Set<string>>(new Set());
   
-  const sessions = mockSessions[course.slug] || [];
+  const course = courseData;
+  const sessions = course.sessions || [];
   const totalMaterials = sessions.reduce((acc, session) => {
-    const materials = mockMaterials[session.id] || [];
-    return acc + materials.length;
+    return acc + (session.materials?.length || 0);
   }, 0);
 
   // Load completed sessions from localStorage
@@ -80,14 +80,14 @@ export function CourseDetail({ course }: CourseDetailProps) {
               {/* Thumbnail */}
               <div className="relative rounded-2xl overflow-hidden mb-6 aspect-video">
                 <img
-                  src={course.thumbnail}
+                  src={course.thumbnail || ''}
                   alt={course.title}
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
                 
-                <div className={`absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-medium border ${LEVEL_COLORS[course.level]}`}>
-                  {LEVEL_LABELS[course.level]}
+                <div className={`absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-medium border ${LEVEL_COLORS[course.level as DifficultyLevel]}`}>
+                  {LEVEL_LABELS[course.level as DifficultyLevel]}
                 </div>
 
                 {/* AI Generated Badge */}
@@ -160,8 +160,8 @@ export function CourseDetail({ course }: CourseDetailProps) {
                   sessions.map((session) => (
                     <SessionAccordion
                       key={session.id}
-                      session={session}
-                      materials={mockMaterials[session.id] || []}
+                      session={session as any}
+                      materials={(session.materials as any[]) || []}
                       isOpen={openSession === session.id}
                       onToggle={() => toggleSession(session.id)}
                       isCompleted={completedSessions.has(session.id)}

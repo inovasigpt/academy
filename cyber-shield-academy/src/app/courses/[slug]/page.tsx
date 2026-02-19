@@ -1,8 +1,9 @@
 import { notFound } from 'next/navigation';
-import { mockCourses } from '@/entities/courses/model/courses';
+import { getCourseWithSessions, getCourses } from '@/db/queries';
 import { CourseDetail } from '@/page-components/course-detail';
 
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';
+export const revalidate = 3600; // Revalidate every hour
 
 interface CoursePageProps {
   params: Promise<{
@@ -12,17 +13,18 @@ interface CoursePageProps {
 
 export default async function CoursePage({ params }: CoursePageProps) {
   const { slug } = await params;
-  const course = mockCourses.find((c) => c.slug === slug);
+  const courseData = await getCourseWithSessions(slug);
   
-  if (!course) {
+  if (!courseData) {
     notFound();
   }
   
-  return <CourseDetail course={course} />;
+  return <CourseDetail courseData={courseData} />;
 }
 
 export async function generateStaticParams() {
-  return mockCourses.map((course) => ({
+  const courses = await getCourses();
+  return courses.map((course) => ({
     slug: course.slug,
   }));
 }

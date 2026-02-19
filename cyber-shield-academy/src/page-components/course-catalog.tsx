@@ -5,8 +5,9 @@ import { motion } from 'framer-motion';
 import { Search, Filter, Sparkles, Bot } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { mockCourses, DifficultyLevel, LEVEL_LABELS } from '@/entities/courses/model/courses';
+import { DifficultyLevel, LEVEL_LABELS } from '@/shared/types';
 import { CourseCard } from '@/entities/courses/ui/course-card';
+import { Course } from '@/shared/types/schema';
 
 const levels: { value: DifficultyLevel | 'all'; label: string }[] = [
   { value: 'all', label: 'Semua Level' },
@@ -15,18 +16,22 @@ const levels: { value: DifficultyLevel | 'all'; label: string }[] = [
   { value: 'advanced', label: 'Lanjutan' },
 ];
 
-export function CourseCatalog() {
+interface CourseCatalogProps {
+  initialCourses: Course[];
+}
+
+export function CourseCatalog({ initialCourses }: CourseCatalogProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedLevel, setSelectedLevel] = useState<DifficultyLevel | 'all'>('all');
 
   const filteredCourses = useMemo(() => {
-    return mockCourses.filter((course) => {
+    return initialCourses.filter((course) => {
       const matchesSearch = course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         course.description.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesLevel = selectedLevel === 'all' || course.level === selectedLevel;
       return matchesSearch && matchesLevel;
     });
-  }, [searchQuery, selectedLevel]);
+  }, [searchQuery, selectedLevel, initialCourses]);
 
   return (
     <div className="min-h-screen bg-slate-950">
@@ -93,7 +98,7 @@ export function CourseCatalog() {
         {filteredCourses.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredCourses.map((course, index) => (
-              <CourseCard key={course.id} course={course} index={index} />
+              <CourseCard key={course.id} course={course as any} index={index} />
             ))}
           </div>
         ) : (
