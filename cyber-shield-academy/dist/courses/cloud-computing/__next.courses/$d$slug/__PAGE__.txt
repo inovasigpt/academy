@@ -1,6 +1,0 @@
-1:"$Sreact.fragment"
-2:I[61976,["/_next/static/chunks/3758c02d675d2cba.js","/_next/static/chunks/1e8f8496c6930d57.js"],"CourseDetail"]
-3:I[97367,["/_next/static/chunks/ff1a16fafef87110.js","/_next/static/chunks/d2be314c3ece3fbe.js"],"OutletBoundary"]
-4:"$Sreact.suspense"
-0:{"buildId":"CS7Zdq7eFWQPJ-KBIPGgj","rsc":["$","$1","c",{"children":[["$","$L2",null,{"course":{"id":"10","title":"Cloud Computing Fundamentals","slug":"cloud-computing","description":"AI-generated course: AWS, Azure, dan GCP untuk pemula. Konsep cloud yang disederhanakan oleh AI. Siap sertifikasi tanpa kursus berbayar.","thumbnail":"https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80","level":"beginner","category":"Cloud","duration":200,"createdAt":"$D2026-02-19T02:23:35.662Z","updatedAt":"$D2026-02-19T02:23:35.662Z","isPublished":true}}],[["$","script","script-0",{"src":"/_next/static/chunks/3758c02d675d2cba.js","async":true}],["$","script","script-1",{"src":"/_next/static/chunks/1e8f8496c6930d57.js","async":true}]],["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"loading":null,"isPartial":false}
-5:null
