@@ -49,13 +49,6 @@ export default async function MaterialsPage({ params }: MaterialsPageProps) {
     revalidatePath(`/admin/courses/${id}/sessions/${sessionId}/materials`);
   }
 
-  async function handleDeleteMaterial(formData: FormData) {
-    'use server';
-    const materialId = formData.get('materialId') as string;
-    await deleteMaterial(materialId);
-    revalidatePath(`/admin/courses/${id}/sessions/${sessionId}/materials`);
-  }
-
   const getIcon = (type: string) => {
     switch (type) {
       case 'video': return <Video className="w-5 h-5" />;
@@ -191,12 +184,19 @@ export default async function MaterialsPage({ params }: MaterialsPageProps) {
                           <div className="flex items-center gap-2">
                             <Button type="submit" size="sm" variant="outline">Update</Button>
                             
-                            <form action={handleDeleteMaterial} className="inline">
-                              <input type="hidden" name="materialId" value={material.id} />
-                              <Button type="submit" size="sm" variant="ghost" className="text-red-400 hover:text-red-300">
-                                <Trash2 className="w-4 h-4" />
-                              </Button>
-                            </form>
+                            <Button 
+                              type="button" 
+                              size="sm" 
+                              variant="ghost" 
+                              className="text-red-400 hover:text-red-300"
+                              formAction={async () => {
+                                'use server';
+                                await deleteMaterial(material.id);
+                                revalidatePath(`/admin/courses/${id}/sessions/${sessionId}/materials`);
+                              }}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
                           </div>
                         </form>
                       </div>
