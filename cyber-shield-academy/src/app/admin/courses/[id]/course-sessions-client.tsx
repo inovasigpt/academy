@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { SuccessModal } from '@/components/ui/success-modal';
 import { ArrowLeft, Plus, FileText, Trash2, Edit3, Save, X } from 'lucide-react';
+import { updateCourseFromForm, createSessionFromForm, updateSessionFromForm, deleteSessionFromForm } from '@/app/admin/actions';
 
 interface Session {
   id: string;
@@ -24,19 +25,13 @@ interface Course {
 interface CourseSessionsClientProps {
   course: Course;
   initialSessions: Session[];
-  updateCourse: (formData: FormData) => Promise<void>;
-  createSession: (formData: FormData) => Promise<void>;
-  updateSession: (formData: FormData) => Promise<void>;
-  deleteSession: (formData: FormData) => Promise<void>;
+  courseId: string;
 }
 
 export function CourseSessionsClient({ 
   course, 
   initialSessions,
-  updateCourse,
-  createSession,
-  updateSession,
-  deleteSession
+  courseId
 }: CourseSessionsClientProps) {
   const [sessions, setSessions] = useState(initialSessions);
   const [editingSession, setEditingSession] = useState<string | null>(null);
@@ -44,13 +39,15 @@ export function CourseSessionsClient({
   const [successMessage, setSuccessMessage] = useState('');
 
   async function handleUpdateCourse(formData: FormData) {
-    await updateCourse(formData);
+    formData.append('id', courseId);
+    await updateCourseFromForm(formData);
     setSuccessMessage('Course updated successfully!');
     setShowSuccess(true);
   }
 
   async function handleCreateSession(formData: FormData) {
-    await createSession(formData);
+    formData.append('courseId', courseId);
+    await createSessionFromForm(formData);
     setSuccessMessage('Session created successfully!');
     setShowSuccess(true);
     // Reset form
@@ -59,9 +56,15 @@ export function CourseSessionsClient({
   }
 
   async function handleUpdateSession(formData: FormData) {
-    await updateSession(formData);
+    await updateSessionFromForm(formData);
     setEditingSession(null);
     setSuccessMessage('Session updated successfully!');
+    setShowSuccess(true);
+  }
+
+  async function handleDeleteSession(formData: FormData) {
+    await deleteSessionFromForm(formData);
+    setSuccessMessage('Session deleted successfully!');
     setShowSuccess(true);
   }
 
@@ -273,14 +276,14 @@ export function CourseSessionsClient({
                               <Edit3 className="w-4 h-4 text-slate-400" />
                             </Button>
 
-                            <Link href={`/admin/courses/${course.id}/sessions/${session.id}/materials`}>
+                            <Link href={`/admin/courses/${courseId}/sessions/${session.id}/materials`}>
                               <Button variant="ghost" size="sm">
                                 <FileText className="w-4 h-4 mr-2" />
                                 Materials
                               </Button>
                             </Link>
 
-                            <form action={deleteSession}>
+                            <form action={handleDeleteSession}>
                               <input type="hidden" name="sessionId" value={session.id} />
                               <Button variant="ghost" size="icon" type="submit" className="text-red-400 hover:text-red-300">
                                 <Trash2 className="w-4 h-4" />

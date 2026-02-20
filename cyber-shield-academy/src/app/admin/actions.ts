@@ -56,6 +56,17 @@ export async function updateCourse(id: string, data: Partial<typeof courses.$inf
   return course;
 }
 
+// FormData wrapper for course update
+export async function updateCourseFromForm(formData: FormData) {
+  const id = formData.get('id') as string;
+  return updateCourse(id, {
+    title: formData.get('title') as string,
+    description: formData.get('description') as string,
+    category: formData.get('category') as string,
+    level: formData.get('level') as string,
+  });
+}
+
 export async function toggleCoursePublish(id: string) {
   const course = await getCourseById(id);
   if (!course) return null;
@@ -93,10 +104,29 @@ export async function createSession(data: {
   return session;
 }
 
+// FormData wrapper for session create
+export async function createSessionFromForm(formData: FormData) {
+  return createSession({
+    courseId: formData.get('courseId') as string,
+    title: formData.get('title') as string,
+    description: formData.get('description') as string,
+    orderIndex: parseInt(formData.get('orderIndex') as string),
+  });
+}
+
 export async function updateSession(id: string, data: Partial<typeof sessions.$inferInsert>) {
   const [session] = await db.update(sessions).set(data).where(eq(sessions.id, id)).returning();
   revalidatePath(`/admin/courses/${session.courseId}`);
   return session;
+}
+
+// FormData wrapper for session update
+export async function updateSessionFromForm(formData: FormData) {
+  const id = formData.get('sessionId') as string;
+  return updateSession(id, {
+    title: formData.get('title') as string,
+    description: formData.get('description') as string,
+  });
 }
 
 export async function deleteSession(id: string) {
@@ -105,6 +135,12 @@ export async function deleteSession(id: string) {
     await db.delete(sessions).where(eq(sessions.id, id));
     revalidatePath(`/admin/courses/${session.courseId}`);
   }
+}
+
+// FormData wrapper for session delete
+export async function deleteSessionFromForm(formData: FormData) {
+  const id = formData.get('sessionId') as string;
+  return deleteSession(id);
 }
 
 // MATERIAL ACTIONS
