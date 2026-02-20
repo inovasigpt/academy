@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { neon } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-http';
-import { courses, sessions, materials } from '../shared/types/schema';
+import { courses, sessions, materials } from '@/shared/types/schema';
 import { eq, desc } from 'drizzle-orm';
 
 const sql = neon(process.env.DATABASE_URL!);
