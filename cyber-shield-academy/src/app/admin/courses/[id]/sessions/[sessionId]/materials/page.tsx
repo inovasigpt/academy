@@ -1,4 +1,4 @@
-import { getSessionById, getMaterialsBySession, getCourseById, createMaterial, updateMaterial, deleteMaterial } from '../../../actions';
+import { getSessionById, getMaterialsBySession, getCourseById, createMaterial, updateMaterial, deleteMaterial } from '@/app/admin/actions';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';

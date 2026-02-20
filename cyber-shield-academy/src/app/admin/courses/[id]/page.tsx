@@ -1,4 +1,4 @@
-import { getCourseById, getSessionsByCourse, createSession, deleteSession } from '../../actions';
+import { getCourseById, getSessionsByCourse, createSession, deleteSession } from '@/app/admin/actions';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
