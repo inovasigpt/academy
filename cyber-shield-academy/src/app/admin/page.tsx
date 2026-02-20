@@ -1,19 +1,18 @@
-import { getCourses } from './actions';
+import { getCourses, toggleCoursePublish } from './actions';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Plus, Edit, Trash2, ExternalLink } from 'lucide-react';
+import { Plus, Edit, Eye, EyeOff } from 'lucide-react';
 import { revalidatePath } from 'next/cache';
-import { deleteCourse } from './actions';
 
 export const dynamic = 'force-dynamic';
 
 export default async function AdminDashboard() {
   const coursesList = await getCourses();
 
-  async function handleDelete(formData: FormData) {
+  async function handleTogglePublish(formData: FormData) {
     'use server';
     const id = formData.get('id') as string;
-    await deleteCourse(id);
+    await toggleCoursePublish(id);
     revalidatePath('/admin');
   }
 
@@ -64,7 +63,6 @@ export default async function AdminDashboard() {
                         )}
                         <div>
                           <p className="font-medium text-slate-100">{course.title}</p>
-                          <p className="text-sm text-slate-500">{course.duration} minutes</p>
                         </div>
                       </div>
                     </td>
@@ -82,25 +80,26 @@ export default async function AdminDashboard() {
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                         course.isPublished ? 'bg-cyan-500/20 text-cyan-400' : 'bg-slate-500/20 text-slate-400'
                       }`}>
-                        {course.isPublished ? 'Published' : 'Draft'}
+                        {course.isPublished ? 'Published' : 'Unpublished'}
                       </span>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center justify-end gap-1">
-                        <Link href={`/courses/${course.slug}`}>
-                          <Button variant="ghost" size="icon">
-                            <ExternalLink className="w-4 h-4 text-slate-400" />
-                          </Button>
-                        </Link>
                         <Link href={`/admin/courses/${course.id}`}>
-                          <Button variant="ghost" size="icon">
+                          <Button variant="ghost" size="icon" title="Edit Course">
                             <Edit className="w-4 h-4 text-slate-400" />
                           </Button>
                         </Link>
-                        <form action={handleDelete}>
+                        <form action={handleTogglePublish}>
                           <input type="hidden" name="id" value={course.id} />
-                          <Button variant="ghost" size="icon" type="submit" className="text-red-400 hover:text-red-300">
-                            <Trash2 className="w-4 h-4" />
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            type="submit" 
+                            title={course.isPublished ? 'Unpublish' : 'Publish'}
+                            className={course.isPublished ? 'text-yellow-400 hover:text-yellow-300' : 'text-cyan-400 hover:text-cyan-300'}
+                          >
+                            {course.isPublished ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                           </Button>
                         </form>
                       </div>
@@ -126,7 +125,7 @@ export default async function AdminDashboard() {
                 )}
                 <div className="flex-1 min-w-0">
                   <p className="font-medium text-slate-100 text-lg mb-1">{course.title}</p>
-                  <p className="text-sm text-slate-500 mb-2">{course.category} • {course.duration} min</p>
+                  <p className="text-sm text-slate-500 mb-2">{course.category}</p>
                   <div className="flex flex-wrap gap-2">
                     <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
                       course.level === 'beginner' ? 'bg-green-500/20 text-green-400' :
@@ -138,30 +137,28 @@ export default async function AdminDashboard() {
                     <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
                       course.isPublished ? 'bg-cyan-500/20 text-cyan-400' : 'bg-slate-500/20 text-slate-400'
                     }`}>
-                      {course.isPublished ? 'Published' : 'Draft'}
+                      {course.isPublished ? 'Published' : 'Unpublished'}
                     </span>
                   </div>
                 </div>
               </div>
               
               <div className="flex gap-2 pt-4 border-t border-slate-800">
-                <Link href={`/courses/${course.slug}`} className="flex-1">
-                  <Button variant="outline" className="w-full">
-                    <ExternalLink className="w-4 h-4 mr-2" />
-                    View
-                  </Button>
-                </Link>
                 <Link href={`/admin/courses/${course.id}`} className="flex-1">
                   <Button variant="outline" className="w-full">
                     <Edit className="w-4 h-4 mr-2" />
                     Edit
                   </Button>
                 </Link>
-                <form action={handleDelete} className="flex-1">
+                
+                <form action={handleTogglePublish} className="flex-1">
                   <input type="hidden" name="id" value={course.id} />
-                  <Button variant="outline" type="submit" className="w-full text-red-400 hover:text-red-300">
-                    <Trash2 className="w-4 h-4 mr-2" />
-                    Delete
+                  <Button 
+                    variant="outline" 
+                    type="submit" 
+                    className={`w-full ${course.isPublished ? 'text-yellow-400 hover:text-yellow-300' : 'text-cyan-400 hover:text-cyan-300'}`}
+                  >
+                    {course.isPublished ? <><EyeOff className="w-4 h-4 mr-2" /> Unpublish</> : <><Eye className="w-4 h-4 mr-2" /> Publish</>}
                   </Button>
                 </form>
               </div>

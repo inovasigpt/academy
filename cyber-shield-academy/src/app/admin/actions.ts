@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { neon } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-http';
-import { courses, sessions, materials } from '@/shared/types/schema';
+import { courses, sessions, materials } from '../shared/types/schema';
 import { eq, desc } from 'drizzle-orm';
 
 const sql = neon(process.env.DATABASE_URL!);
@@ -14,8 +14,21 @@ export async function getCourses() {
   return await db.select().from(courses).orderBy(desc(courses.createdAt));
 }
 
+export async function getPublishedCourses() {
+  return await db
+    .select()
+    .from(courses)
+    .where(eq(courses.isPublished, true))
+    .orderBy(desc(courses.createdAt));
+}
+
 export async function getCourseById(id: string) {
   const result = await db.select().from(courses).where(eq(courses.id, id)).limit(1);
+  return result[0] || null;
+}
+
+export async function getCourseBySlug(slug: string) {
+  const result = await db.select().from(courses).where(eq(courses.slug, slug)).limit(1);
   return result[0] || null;
 }
 
@@ -29,7 +42,7 @@ export async function createCourse(data: {
   duration?: number;
   instructor?: string;
 }) {
-  const [course] = await db.insert(courses).values(data).returning();
+  const [course] = await db.insert(courses).values({ ...data, isPublished: true }).returning();
   revalidatePath('/admin');
   revalidatePath('/courses');
   return course;
@@ -43,10 +56,19 @@ export async function updateCourse(id: string, data: Partial<typeof courses.$inf
   return course;
 }
 
-export async function deleteCourse(id: string) {
-  await db.delete(courses).where(eq(courses.id, id));
+export async function toggleCoursePublish(id: string) {
+  const course = await getCourseById(id);
+  if (!course) return null;
+  
+  const [updated] = await db
+    .update(courses)
+    .set({ isPublished: !course.isPublished, updatedAt: new Date() })
+    .where(eq(courses.id, id))
+    .returning();
+    
   revalidatePath('/admin');
   revalidatePath('/courses');
+  return updated;
 }
 
 // SESSION ACTIONS
